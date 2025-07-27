@@ -75,11 +75,62 @@ const getBet = (balance, lines) => {
         }
 
     }
-}
+};
 
 //spin the slot machine
 const spin = () => {
+    //const makes sure the values in the array are the same but (reference data type)
+    //later is when we will actually add values to the array 
+    const symbols = []; 
 
+    for(const [symbol, count] of Object.entries(SYMBOLS_COUNT)){
+        for(let i = 0; i < count; i++){
+            symbols.push(symbol); //add to array 
+        }
+    }
+
+    const reels = [];
+
+    for(let i = 0; i < COLS; i++){
+        reels.push([]);
+        const reelSymbols = [...symbols]; //copies available symbols into array 
+        for(let j = 0; j < ROWS; j++){
+            const randomIndex = Math.floor(Math.random() * reelSymbols.length); //rand num between 0-1 from random
+            const selectedSymbol = reelSymbols[randomIndex];
+            reels[i].push(selectedSymbol);
+            reelSymbols.splice(randomIndex, 1);
+        }
+    }
+
+    return reels; 
+};
+
+const transpose = (reels) => {
+    const rows = [];
+
+    for(let i = 0; i < ROWS; i++){
+        rows.push([]);
+        for(let j = 0; j < COLS; j++){
+            rows[i].push(reels[j][i])
+        }
+    }
+
+    return rows; 
+};
+
+const printRows = (rows) => {
+    for(const row of rows){
+        let rowString = "";
+
+        for(const [i, symbol] of row.entries()){
+            rowString += symbol;
+
+            if(i != row.length - 1){
+                rowString += " | ";
+            }
+        }
+        console.log(rowString)
+;    }
 }
 
 
@@ -87,4 +138,6 @@ const spin = () => {
 let balance = deposit();
 const numberOfLines = getNumberOfLines(); 
 const bet = getBet(balance, numberOfLines); 
-
+const reels = spin(); 
+const rows = transpose(reels);
+printRows(rows); 
